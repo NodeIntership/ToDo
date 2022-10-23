@@ -12,13 +12,11 @@ app.use(express.urlencoded({
 const port = process.env.PORT;
 const dbUri = process.env.DB_URL;
 
-const { createRow, readeList, readeOne, changeRow, deleteRow } = require("./Controllers/todo");
+const todoRout = require("./Routes/todoRout");
+const categoryRout = require("./Routes/categoryRout");
 
-app.post("/create", createRow);
-app.get("/readAll", readeList);
-app.get("/readOne", readeOne);
-app.patch("/change", changeRow);
-app.delete("/remove", deleteRow)
+app.use("/todo", todoRout);
+app.use("/category", categoryRout);
 
 mongoose.connect(dbUri, {
   useNewUrlParser: true,
