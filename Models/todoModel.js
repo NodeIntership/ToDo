@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
+let { todoStatus } = require("../Utils/constants")
 
-const listSchema = new mongoose.Schema({
+const todoSchema = new mongoose.Schema({
   title: {
     type: String,
   },
@@ -9,10 +10,11 @@ const listSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    enum: ["PENDING", "COMPLETED"],
+    enum: todoStatus,
   },
   date: {
     type: Date,
+    default: new Date
   },
   category: {
     type: mongoose.Schema.Types.ObjectId,
@@ -20,6 +22,6 @@ const listSchema = new mongoose.Schema({
   },
 });
 
-const listModel = mongoose.model("List", listSchema)
+const todoModel = mongoose.model("todo", todoSchema)
 
-module.exports = listModel
+module.exports = todoModel

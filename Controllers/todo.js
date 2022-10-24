@@ -1,6 +1,6 @@
-const listModel = require("../Models/todoModel");
+const todoModel = require("../Models/todoModel");
 const catModel = require("../Models/categoriesModel");
-const todoValidator = require("../Utils/todoValidation");
+const todoValidator = require("../Validations/todoValidation");
 
 async function createRow(req, res) {
   let validRow = todoValidator.validate(req.body);
@@ -9,17 +9,16 @@ async function createRow(req, res) {
     res.send(validRow.error.details[0].message);
     return;
   }
-  let category = await catModel.findOne({ title: req.body.category });
-  if (!category) {
-    category = new catModel({
-      title: req.body.category,
-    });
-    category.save();
+  let category = await catModel.findById(req.body.categoryId);
+  
+  if(!category){
+    res.send("category not found");
+    return;
   }
 
   validRow.value.category = category._id;
 
-  let newRow = new listModel(validRow.value);
+  let newRow = new todoModel(validRow.value);
 
   await newRow.save();
 
@@ -27,12 +26,20 @@ async function createRow(req, res) {
 }
 
 async function readeList(req, res) {
-  let list = await listModel.find();
+  let list = await todoModel.find();
   if (list.length) {
     res.json(list);
     return;
   }
   res.send("todo list empty");
+}
+
+async function readOnCategory(req, res){
+  let cat = await todoModel.find({category: req.query.id});
+  if(!cat){
+    res.send("Not category found")
+  }
+  res.json(cat)
 }
 
 async function readeOne(req, res) {
@@ -43,12 +50,11 @@ async function readeOne(req, res) {
     return;
   }
 
-  listModel
+  todoModel
     .findById(req.query.id)
     .populate("category")
     .exec((e, list) => {
       if (e) {
-        console.log(e);
         res.send(e.message);
         return;
       }
@@ -63,7 +69,7 @@ async function changeRow(req, res) {
   }
   let { id, description } = req.body;
 
-  let row = await listModel.findById(id);
+  let row = await todoModel.findById(id);
 
   if (!row) {
     res.send("There is no row with id");
@@ -84,7 +90,7 @@ async function deleteRow(req, res) {
     return;
   }
 
-  let row = await listModel.findByIdAndRemove(req.query.id);
+  let row = await todoModel.findByIdAndRemove(req.query.id);
 
   if (!row) {
     res.send("There is no row with id");
@@ -100,4 +106,5 @@ module.exports = {
   readeOne,
   changeRow,
   deleteRow,
+  readOnCategory,
 };

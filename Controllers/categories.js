@@ -17,7 +17,7 @@ function createCategory(req, res){
 
 async function readeCategory(req, res) {
   let categories = await catModel.find();
-  console.log(categories);
+  
   if (categories.length) {
     res.json(categories);
     return;
