@@ -1,65 +1,46 @@
-const todoModel = require("../Models/todoModel");
-const catModel = require("../Models/categoriesModel");
 const todoValidator = require("../Validations/todoValidation");
+const {
+  create,
+  findMeny,
+  findRowById,
+  updateRow,
+  removeRow,
+} = require("../Models/todoModel");
 
 async function createRow(req, res) {
   let validRow = todoValidator.validate(req.body);
 
   if (validRow.error) {
-    res.send(validRow.error.details[0].message);
-    return;
-  }
-  let category = await catModel.findById(req.body.categoryId);
-  
-  if(!category){
-    res.send("category not found");
+    res.json({ message: validRow.error.details[0].message });
     return;
   }
 
-  validRow.value.category = category._id;
+  let result = await create(validRow.value);
 
-  let newRow = new todoModel(validRow.value);
+  if (result === null) {
+    res.json({ message: "category not found" });
+    return;
+  }
 
-  await newRow.save();
-
-  res.send("Ok");
+  res.json(result);
 }
 
 async function readeList(req, res) {
-  let list = await todoModel.find();
-  if (list.length) {
-    res.json(list);
+  let result = await findMeny();
+  if (result.length) {
+    res.json(result);
     return;
   }
-  res.send("todo list empty");
-}
-
-async function readOnCategory(req, res){
-  let cat = await todoModel.find({category: req.query.id});
-  if(!cat){
-    res.send("Not category found")
-  }
-  res.json(cat)
+  res.json([]);
 }
 
 async function readeOne(req, res) {
-  if (!req.query.id) {
-    res.send(
-      `Please enter ID on the link. example: http://localhost:3000/todo/readone?id=your id`
-    );
+  let result = await findRowById(req.params.id);
+  if (result === null) {
+    res.json({ message: "Incorrect id" });
     return;
   }
-
-  todoModel
-    .findById(req.query.id)
-    .populate("category")
-    .exec((e, list) => {
-      if (e) {
-        res.send(e.message);
-        return;
-      }
-      res.send(list);
-    });
+  res.json(result);
 }
 
 async function changeRow(req, res) {
@@ -67,37 +48,25 @@ async function changeRow(req, res) {
     res.send("please fill in both fields");
     return;
   }
-  let { id, description } = req.body;
 
-  let row = await todoModel.findById(id);
+  let result = await updateRow(req.params.id, req.body);
 
-  if (!row) {
+  if (result === null) {
     res.send("There is no row with id");
     return;
   }
-  row.description = description;
 
-  await row.save();
-
-  res.send("Ok");
+  res.json(result);
 }
 
 async function deleteRow(req, res) {
-  if (!req.query.id) {
-    res.send(
-      `Please enter ID on the link. example: http://localhost:3000/todo/remove?id=your id`
-    );
-    return;
-  }
-
-  let row = await todoModel.findByIdAndRemove(req.query.id);
-
-  if (!row) {
+  let result = await removeRow(req.params.id);
+  if (result === null) {
     res.send("There is no row with id");
     return;
   }
 
-  res.json("Row removed");
+  res.json(result);
 }
 
 module.exports = {
@@ -106,5 +75,4 @@ module.exports = {
   readeOne,
   changeRow,
   deleteRow,
-  readOnCategory,
 };

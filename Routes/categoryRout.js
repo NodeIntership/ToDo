@@ -10,10 +10,12 @@ const {
   deleteCategory,
 } = require("../Controllers/categories");
 
-router.post("/create", createCategory);
-router.get("/readAll", readeCategory);
-router.get("/readOne", readeOneCategory);
-router.patch("/change", changeCategory);
-router.delete("/remove", deleteCategory);
+const idParamsValidator = require("../middlewares/id");
+
+router.post("/", createCategory);
+router.get("/", readeCategory);
+router.get("/:id", idParamsValidator, readeOneCategory);
+router.patch("/:id",idParamsValidator, changeCategory);
+router.delete("/:id",idParamsValidator, deleteCategory);
 
 module.exports = router;

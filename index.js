@@ -4,23 +4,18 @@ require("dotenv").config();
 
 const app = express();
 
-app.use(express.json())
+app.use(express.json());
 app.use(express.urlencoded({
     extended: false
 }));
 
-const port = process.env.PORT;
-const dbUri = process.env.DB_URL;
+const routes = require("./Routes/routes");
 
-const todoRout = require("./Routes/todoRout");
-const categoryRout = require("./Routes/categoryRout");
+app.use("/", routes);
 
-app.use("/todo", todoRout);
-app.use("/category", categoryRout);
+const { port, dbUri } = require("./Config/variables")
 
-mongoose.connect(dbUri, {
-  useNewUrlParser: true,
-}, (e) => {
+mongoose.connect(dbUri, (e) => {
     if(e) {
         return console.log(e);
     }

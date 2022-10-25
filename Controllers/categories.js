@@ -1,46 +1,39 @@
-const catModel = require("../Models/categoriesModel");
+const {
+  create,
+  findMeny,
+  findCategoryById,
+  updateCategory,
+  removeCategory,
+} = require("../Models/categoriesModel");
+const categoryValidation = require("../Validations/category.validation");
 
-function createCategory(req, res){
-    let category = new catModel({
-        title: req.body.title
-    })
-    category.save().
-    then(()=>{
-        res.send("Ok")
-    }).
-    catch(e=>{
-        if(e){
-            res.send("There is a category with this title");
-        }
-    })
+async function createCategory(req, res) {
+  let validTitle = categoryValidation.validate(req.body);
+  if (validTitle.error) {
+    res.json({ message: validTitle.error.details[0].message });
+    return;
+  }
+  let result = await create();
+
+  res.json(result);
 }
 
 async function readeCategory(req, res) {
-  let categories = await catModel.find();
-  
-  if (categories.length) {
-    res.json(categories);
+  let categories = await findMeny();
+  if (result.length) {
+    res.json(result);
     return;
   }
-  res.send("categories list empty");
+  res.json([]);
 }
 
 async function readeOneCategory(req, res) {
-  if (!req.query.id) {
-    res.send(
-      `Please enter ID on the link. example: http://localhost:3000/category/readone?id=your id`
-    );
+  let result = await findCategoryById(req.params.id);
+  if (result === null) {
+    res.json({ message: "Incorrect id" });
     return;
   }
-
-  let cat = await catModel.findById(req.query.id);
-
-  if (!cat) {
-    res.send("There is no category with id");
-    return;
-  }
-
-  res.json(cat);
+  res.json(result);
 }
 
 async function changeCategory(req, res) {
@@ -48,37 +41,25 @@ async function changeCategory(req, res) {
     res.send("please fill in both fields");
     return;
   }
-  let { id, title } = req.body;
 
-  let cat = await catModel.findById(id);
+  let result = await updateCategory(req.params.id, req.body);
 
-  if (!cat) {
-    res.send("There is no category with id");
+  if (result === null) {
+    res.send("There is no row with id");
     return;
   }
-  cat.title = title;
 
-  await cat.save();
-
-  res.send("Ok");
+  res.json(result);
 }
 
 async function deleteCategory(req, res) {
-  if (!req.query.id) {
-    res.send(
-      `Please enter ID on the link. example: http://localhost:3000/category/remove?id=your id`
-    );
-    return;
-  }
-
-  let cat = await catModel.findByIdAndRemove(req.query.id);
-
-  if (!cat) {
+  let result = await removeCategory(req.params.id);
+  if (result === null) {
     res.send("There is no category with id");
     return;
   }
 
-  res.json("category removed");
+  res.json(result);
 }
 
 module.exports = {

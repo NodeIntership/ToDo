@@ -8,15 +8,14 @@ const {
   readeOne,
   changeRow,
   deleteRow,
-  readOnCategory,
 } = require("../Controllers/todo");
 
+const idParamsValidator = require("../middlewares/id");
 
-router.post("/create", createRow);
-router.get("/readAll", readeList);
-router.get("/readOne", readeOne);
-router.get("/readOnCategory", readOnCategory);
-router.patch("/change", changeRow);
-router.delete("/remove", deleteRow);
+router.post("/", createRow);
+router.get("/", readeList);
+router.get("/:id", idParamsValidator, readeOne);
+router.patch("/:id",idParamsValidator, changeRow);
+router.delete("/:id",idParamsValidator, deleteRow);
 
 module.exports = router
