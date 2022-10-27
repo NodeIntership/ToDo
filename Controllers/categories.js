@@ -1,11 +1,12 @@
 const {
   create,
-  findMeny,
+  findMany,
   findCategoryById,
   updateCategory,
   removeCategory,
 } = require("../Models/categoriesModel");
 const categoryValidation = require("../Validations/category.validation");
+const { categoryUpdateValidationSchema } = require("../Validations/update.validation");
 
 async function createCategory(req, res) {
   let validTitle = categoryValidation.validate(req.body);
@@ -19,9 +20,9 @@ async function createCategory(req, res) {
 }
 
 async function readeCategory(req, res) {
-  let categories = await findMeny();
-  if (result.length) {
-    res.json(result);
+  let categories = await findMany();
+  if (categories.length) {
+    res.json(categories);
     return;
   }
   res.json([]);
@@ -37,8 +38,10 @@ async function readeOneCategory(req, res) {
 }
 
 async function changeCategory(req, res) {
-  if (!req.body) {
-    res.send("please fill in both fields");
+  let validCat = categoryUpdateValidationSchema.validate(req.body);
+
+  if (validCat.error) {
+    res.json({ message: validCat.error.details[0].message });
     return;
   }
 

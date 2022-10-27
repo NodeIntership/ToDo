@@ -1,7 +1,8 @@
 const todoValidator = require("../Validations/todoValidation");
+const {todoUpdateValidationSchema} = require("../Validations/update.validation")
 const {
   create,
-  findMeny,
+  findMany,
   findRowById,
   updateRow,
   removeRow,
@@ -26,7 +27,7 @@ async function createRow(req, res) {
 }
 
 async function readeList(req, res) {
-  let result = await findMeny();
+  let result = await findMany();
   if (result.length) {
     res.json(result);
     return;
@@ -46,6 +47,13 @@ async function readeOne(req, res) {
 async function changeRow(req, res) {
   if (!req.body) {
     res.send("please fill in both fields");
+    return;
+  }
+
+  let validRow = todoUpdateValidationSchema.validate(req.body);
+
+  if (validRow.error) {
+    res.json({ message: validRow.error.details[0].message });
     return;
   }
 

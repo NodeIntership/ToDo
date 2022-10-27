@@ -5,8 +5,7 @@ const { findCategoryById } = require("./categoriesModel");
 const todoModel = mongoose.model("todo", todoSchema);
 
 async function create(info) {
-  let category = findCategoryById(info.category);
-
+  let category = await findCategoryById(info.category);
   if (!category) {
     return null;
   }
@@ -16,26 +15,14 @@ async function create(info) {
   return result;
 }
 
-async function findMeny() {
+async function findMany() {
   let list = await todoModel.find();
   return list;
 }
 
 async function findRowById(id) {
-  let result = await todoModel.findById(id);
-
-  if (!result) {
-    return null;
-  }
-
-  result.populate("category").exec((e, list) => {
-    if (e) {
-      res.send(e.message);
-      return;
-    }
-    result = list;
-  });
-  return result;
+  let result = await todoModel.findById(id).populate("category").exec();
+  return result
 }
 
 async function updateRow(id, info) {
@@ -43,6 +30,7 @@ async function updateRow(id, info) {
   if (!row) {
     return null;
   }
+
   for (let key in info) {
     row[key] = info[key];
   }
@@ -60,7 +48,7 @@ async function removeRow(id) {
 
 module.exports = {
   create,
-  findMeny,
+  findMany,
   findRowById,
   updateRow,
   removeRow,

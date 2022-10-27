@@ -8,8 +8,8 @@ async function create(info) {
   return result;
 }
 
-async function findMeny() {
-  let list = await todoModel.find();
+async function findMany() {
+  let list = await categoriesModel.find();
   return list;
 }
 
@@ -20,7 +20,7 @@ async function findCategoryById(id) {
 }
 
 async function updateCategory(id, info) {
-  let cat = await todoModel.findById(id);
+  let cat = await categoriesModel.findById(id);
   if (!cat) {
     return null;
   }
@@ -32,7 +32,7 @@ async function updateCategory(id, info) {
 }
 
 async function removeCategory(id) {
-  let cat = await todoModel.findByIdAndRemove(id);
+  let cat = await categoriesModel.findByIdAndRemove(id);
   if (!cat) {
     return null;
   }
@@ -42,7 +42,7 @@ async function removeCategory(id) {
 module.exports = {
   findCategoryById,
   create,
-  findMeny,
+  findMany,
   updateCategory,
   removeCategory,
 };
