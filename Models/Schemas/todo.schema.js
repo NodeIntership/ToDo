@@ -1,4 +1,3 @@
-const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
 let { PENDING, COMPLETED } = require("../../Utils/constants");
 
@@ -18,8 +17,16 @@ const todoSchema = new Schema({
     default: new Date(),
   },
   category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: "Categories",
+    type: Schema.Types.ObjectId,
+    ref: "categories",
+  },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: "users",
+  },
+  isDeleted: {
+    type: Boolean,
+    default: false,
   },
 });
 

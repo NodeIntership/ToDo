@@ -1,5 +1,5 @@
 const todoValidator = require("../Validations/todoValidation");
-const {todoUpdateValidationSchema} = require("../Validations/update.validation")
+const { todoUpdateValidationSchema } = require("../Validations/update.validation")
 const {
   create,
   findMany,
@@ -16,14 +16,19 @@ async function createRow(req, res) {
     return;
   }
 
-  let result = await create(validRow.value);
-
-  if (result === null) {
-    res.json({ message: "category not found" });
-    return;
-  }
-
-  res.json(result);
+  create(req.body)
+    .then(result => {
+      res.json(result);
+    })
+    .catch(e => {
+      if(e.message === "category"){
+        res.json({message: "category not found"})
+        return 
+      } else if(e.message === "user"){
+        res.json({ message: "user not found" });
+        return; 
+      }
+    })
 }
 
 async function readeList(req, res) {

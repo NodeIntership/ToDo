@@ -1,14 +1,14 @@
 const mongoose = require("mongoose");
 const categoriesSchema = require("./Schemas/categories.schema");
 
-const categoriesModel = mongoose.model("Categories", categoriesSchema);
+const categoriesModel = mongoose.model("categories", categoriesSchema);
 
 async function create(info) {
   let result = await categoriesModel.create(info);
   return result;
 }
 
-async function findMany() {
+async function findCategories() {
   let list = await categoriesModel.find();
   return list;
 }
@@ -42,7 +42,7 @@ async function removeCategory(id) {
 module.exports = {
   findCategoryById,
   create,
-  findMany,
+  findCategories,
   updateCategory,
   removeCategory,
 };

@@ -1,6 +1,6 @@
 const {
   create,
-  findMany,
+  findCategories,
   findCategoryById,
   updateCategory,
   removeCategory,
@@ -14,13 +14,13 @@ async function createCategory(req, res) {
     res.json({ message: validTitle.error.details[0].message });
     return;
   }
-  let result = await create();
+  let result = await create(req.body);
 
   res.json(result);
 }
 
 async function readeCategory(req, res) {
-  let categories = await findMany();
+  let categories = await findCategories();
   if (categories.length) {
     res.json(categories);
     return;
