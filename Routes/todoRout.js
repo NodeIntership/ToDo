@@ -11,9 +11,10 @@ const {
 } = require("../Controllers/todo");
 
 const idParamsValidator = require("../middlewares/id");
+const queryValidator = require("../middlewares/query")
 
 router.post("/", createRow);
-router.get("/", readeList);
+router.get("/", queryValidator, readeList);
 router.get("/:id", idParamsValidator, readeOne);
 router.patch("/:id",idParamsValidator, changeRow);
 router.delete("/:id",idParamsValidator, deleteRow);

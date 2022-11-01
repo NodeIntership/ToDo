@@ -32,7 +32,7 @@ async function createRow(req, res) {
 }
 
 async function readeList(req, res) {
-  let result = await findMany();
+  let result = await findMany(req.query);
   if (result.length) {
     res.json(result);
     return;
