@@ -5,6 +5,7 @@ const { getUserById } = require("./userModel");
 
 const todoModel = mongoose.model("todo", todoSchema);
 
+
 async function create(info) {
   let category = await findCategoryById(info.category);
   if (!category) {
@@ -21,8 +22,10 @@ async function create(info) {
 }
 
 async function findMany() {
+  let test = await todoModel.collection.aggregate([]);
   let list = await todoModel.find({isDeleted: {$ne: true}});
-  return list;
+  console.log(test);
+  return list
 }
 
 async function findRowById(id) {
