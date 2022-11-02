@@ -83,7 +83,6 @@ async function findMany(query) {
       },
     },
   ]);
-  
   return list;
 }
 
