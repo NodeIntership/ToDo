@@ -16,6 +16,11 @@ async function createUser(req, res){
 
     let createdUser = await create(req.body)
 
+    if(createdUser === "profession"){
+      res.json({ message: "profession not found"})
+      return
+    }
+
     res.send(createdUser)
 }
 

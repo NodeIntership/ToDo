@@ -5,7 +5,7 @@ const userSchema = new Schema({
     type: String,
     required: true,
   },
-  surnam: {
+  surname: {
     type: String,
   },
   birthday: {
@@ -15,12 +15,20 @@ const userSchema = new Schema({
     type: String,
     unique: true,
     required: true,
-
   },
   isDeleted: {
     type: Boolean,
     default: false,
   },
+  profession: {
+    type: Schema.Types.ObjectId,
+    ref: "professions",
+    required: true
+  },
+  professionHidden: {
+    type: Boolean,
+    default: false
+  }
 });
 
 module.exports = userSchema;

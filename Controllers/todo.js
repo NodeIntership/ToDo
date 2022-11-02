@@ -8,7 +8,7 @@ const {
   removeRow,
 } = require("../Models/todoModel");
 
-async function createRow(req, res) {
+function createRow(req, res) {
   let validRow = todoValidator.validate(req.body);
 
   if (validRow.error) {
@@ -32,7 +32,7 @@ async function createRow(req, res) {
 }
 
 async function readeList(req, res) {
-  let result = await findMany();
+  let result = await findMany(req.query);
   if (result.length) {
     res.json(result);
     return;
