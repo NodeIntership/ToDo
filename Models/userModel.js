@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
+const { lookupUser } = require("../Utils/mongoDB.utils");
 const { getProfessionById } = require("./profession.model");
 const userSchema = require("./Schemas/user.schema");
-const userLookup = require("../Config/user.lookup");
 
 const userModel = mongoose.model("users", userSchema);
 
@@ -27,7 +27,38 @@ async function getUserById(id) {
     {
       $match: { _id: mongoose.Types.ObjectId(id), isDeleted: { $ne: true } },
     },
-    ...userLookup
+    {
+      $lookup: {
+        from: "todos",
+        localField: "_id",
+        foreignField: "userId",
+        as: "todos",
+        pipeline: [
+          { $match: { isDeleted: { $ne: true } } },
+          { $sort: { date: 1 } },
+          { $limit: 2 },
+          {
+            $lookup: {
+              from: "categories",
+              localField: "category",
+              foreignField: "_id",
+              as: "category",
+            },
+          },
+          {
+            $project: {
+              id: "$_id",
+              title: true,
+              description: true,
+              category: true,
+              date: true,
+              _id: false,
+            },
+          },
+        ],
+      },
+    },
+    ...lookupUser(),
   ]);
 
   return user;
@@ -43,4 +74,5 @@ module.exports = {
   findUserByEmail,
   getUserById,
   getUsers,
+  userModel
 };

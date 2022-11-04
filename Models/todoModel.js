@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const todoSchema = require("./Schemas/todo.schema");
 const { findCategoryById } = require("./categoriesModel");
-const { getUserById } = require("./userModel");
-const userLookup = require("../Config/user.lookup");
+const { userModel } = require("./userModel");
+const { lookupUser } = require("../Utils/mongoDB.utils");
 
 const todoModel = mongoose.model("todo", todoSchema);
 
@@ -11,7 +11,7 @@ async function create(info) {
   if (!category) {
     throw new Error("category");
   }
-  let user = await getUserById(info.userId);
+  let user = await userModel.findById(info.userId);
   if (!user) {
     throw new Error("user");
   }
@@ -24,7 +24,7 @@ async function create(info) {
 async function findMany(query) {
   let condition = {};
 
-  condition.isDeleted = {$ne: true}
+  condition.isDeleted = { $ne: true };
 
   if (query.category) {
     condition.category = mongoose.Types.ObjectId(query.category);
@@ -40,6 +40,9 @@ async function findMany(query) {
     {
       $match: condition,
     },
+    { $sort: { date: 1 } },
+    { $skip: ofset },
+    { $limit: 1 },
     {
       $lookup: {
         from: "users",
@@ -50,7 +53,7 @@ async function findMany(query) {
           {
             $match: { isDeleted: { $ne: true } },
           },
-          ...userLookup,
+          ...lookupUser(),
         ],
       },
     },
