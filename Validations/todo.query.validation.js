@@ -5,7 +5,7 @@ const Schema = Joi.object({
   status: Joi.string().valid(...enums),
   category: Joi.string().hex().length(24),
   userId: Joi.string().hex().length(24),
-  ofset: Joi.number(),
+  offset: Joi.number(),
   limit: Joi.number()
 });
 

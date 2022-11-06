@@ -1,4 +1,8 @@
-const { create, findUserByEmail, getUserById } = require("../Models/userModel");
+const {
+  addUser,
+  findUserByEmail,
+  getUserById,
+} = require("../Models/userModel");
 let userValidate = require("../Validations/user.validation");
 
 async function createUser(req, res){
@@ -14,7 +18,7 @@ async function createUser(req, res){
         return
     }
 
-    let createdUser = await create(req.body)
+    let createdUser = await addUser(req.body);
 
     if(createdUser === "profession"){
       res.json({ message: "profession not found"})

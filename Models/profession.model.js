@@ -3,7 +3,7 @@ const professionSchema = require("./Schemas/profession.schema");
 
 const professionModel = mongoose.model("professions", professionSchema);
 
-async function create(info) {
+async function addProfession(info) {
   let prof = await professionModel.findOne({ title: info.title });
   if (prof) {
     throw new Error("such a profession exists");
@@ -25,7 +25,7 @@ async function getProfessionById(id) {
 }
 
 module.exports = {
-  create,
+  addProfession,
   getProfessionById,
-  getProfessions
+  getProfessions,
 };

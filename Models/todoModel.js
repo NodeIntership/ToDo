@@ -23,8 +23,20 @@ async function create(info) {
 
 async function findMany(query) {
   let condition = {};
+  let limit, offset
 
   condition.isDeleted = { $ne: true };
+
+  if(query.limit){
+    limit = +query.limit
+  } else {
+    limit = 50
+  }
+  if(query.offset){
+    offset = +query.offset;
+  } else {
+    offset = 0
+  }
 
   if (query.category) {
     condition.category = mongoose.Types.ObjectId(query.category);
@@ -41,8 +53,8 @@ async function findMany(query) {
       $match: condition,
     },
     { $sort: { date: 1 } },
-    { $skip: ofset },
-    { $limit: 1 },
+    { $skip: offset },
+    { $limit: limit },
     {
       $lookup: {
         from: "users",

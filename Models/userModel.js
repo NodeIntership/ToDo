@@ -5,7 +5,7 @@ const userSchema = require("./Schemas/user.schema");
 
 const userModel = mongoose.model("users", userSchema);
 
-async function create(info) {
+async function addUser(info) {
   let prof = await getProfessionById(info.profession);
 
   if (!prof) {
@@ -70,9 +70,9 @@ async function findUserByEmail(mail) {
 }
 
 module.exports = {
-  create,
+  addUser,
   findUserByEmail,
   getUserById,
   getUsers,
-  userModel
+  userModel,
 };

@@ -1,4 +1,8 @@
-const { create, getProfessionById, getProfessions } = require("../Models/profession.model");
+const {
+  addProfession,
+  getProfessionById,
+  getProfessions,
+} = require("../Models/profession.model");
 let profValidator = require("../Validations/profession.validation");
 
 function createProfession(req, res) {
@@ -8,11 +12,13 @@ function createProfession(req, res) {
     return;
   }
 
-  create(req.body).then(info => {
-    res.json(info)
-  }).catch(e => {
-    res.json({ message: e.message })
-  })
+  addProfession(req.body)
+    .then((info) => {
+      res.json(info);
+    })
+    .catch((e) => {
+      res.json({ message: e.message });
+    });
 }
 
 async function findProfessions(req, res){
